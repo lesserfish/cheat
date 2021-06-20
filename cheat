@@ -12,7 +12,8 @@ print_help(){
 	echo "write - Creates a new file with the parameter being a text file containing the information to be displayed. Parameters are [0] = File to be added"
 	echo "update - Appends file [1] to the existent file [0]. Parameters are [0] [1] [options]"
 	echo "destroy - Destroys file [0]"
-	echo "recreate" - Destroys the file [0] and creates file [1] with the same name.
+	echo "recreate - Destroys the file [0] and creates file [1] with the same name."
+	echo "list - Lists all of the files"
 	echo
 }
 
@@ -139,6 +140,15 @@ destroy()
 		echo "File $HOME/.cheat/$1 does not exist"
 	fi
 }
+list()
+{
+	if [[ ! -d "$HOME/.cheat" ]]
+	then
+		echo "No files exist!"
+	else
+		ls $HOME/.cheat
+	fi
+}
 if [[ $1 == "--help" || $1 == "" ]]
 then
 	print_help
@@ -148,15 +158,18 @@ then
 elif [[ $1 == "update" ]]
 then
 	update $2 $3
-elif [[ $1 == "write" ]]
+elif [[ $1 == "write" || $1 == "add" ]]
 then
 	write $2
-elif [[ $1 == "destroy" ]]
+elif [[ $1 == "destroy" || $1 == "rm" || $1 == "remove" ]]
 then
 	destroy $2
 elif [[ $1 == "recreate" ]]
 then
 	recreate $2 $3
+elif [[ $1 == "list" || $1 == "ls" ]]
+then
+	list
 else
 	print_help
 fi
