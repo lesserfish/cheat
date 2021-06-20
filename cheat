@@ -1,0 +1,163 @@
+#!/bin/bash
+
+print_help(){
+	echo "Cheat is for cheat-sheet. Basically a more simple version of man, which you usually update by yourself."
+	echo "Usage is as follows: "
+	echo 
+	echo "cheat [command] [paramater] [options]"
+	echo
+	echo
+	echo "List of commands:"
+	echo "read - parameter [0] will be read."
+	echo "write - Creates a new file with the parameter being a text file containing the information to be displayed. Parameters are [0] = File to be added"
+	echo "update - Appends file [1] to the existent file [0]. Parameters are [0] [1] [options]"
+	echo "destroy - Destroys file [0]"
+	echo "recreate" - Destroys the file [0] and creates file [1] with the same name.
+	echo
+}
+
+read()
+{
+	if [[ $1 == "" ]]
+	then
+		echo "Please add an argument to be read!"
+		exit 1
+	fi
+
+	if [[ ! -d "$HOME/.cheat" ]]
+	then
+		mkdir "$HOME/.cheat"
+		echo "The file does not exist!"
+	else
+		if [[ ! -f "$HOME/.cheat/$1" ]]
+		then
+			echo "The file does not exist!"
+			exit 1
+		else
+			cat "$HOME/.cheat/$1"
+		fi
+	fi
+}
+write()
+{
+	if [[ $1 == "" ]]
+	then
+		echo "Please add a file as input!"
+		exit 1
+	fi
+
+	if [[ ! -d "$HOME/.cheat" ]]
+	then
+		mkdir "$HOME/.cheat"
+	fi
+
+	if [[ ! -f "$PWD/$1" ]]
+	then
+		echo "File $1 does not exist"
+		exit 1
+	elif [[ -f "$HOME/.cheat/$1" ]]
+	then
+		echo "File $1 already exists in $HOME/.cheat. Either update or rewrite it!"
+		exit 1
+	else
+		cat $PWD/$1 > $HOME/.cheat/$1
+	fi
+}
+recreate()
+{
+	if [[ $1 == "" ]]
+	then
+		echo "Please add a file as input!"
+		exit 1
+	fi
+
+	if [[ ! -d "$HOME/.cheat" ]]
+	then
+		mkdir "$HOME/.cheat"
+	fi
+	
+	if [[ $2 == "" ]]
+	then
+		if [[ ! -f "$PWD/$1" ]]
+		then
+			echo "$File $1 does not exist"
+			exit 1
+		else
+			cat $PWD/$1 > $HOME/.cheat/$1
+		fi
+	else
+		if [[ ! -f "$PWD/$2" ]]
+		then
+			echo "File $2 does not exist"
+		else
+			cat $PWD/$2 > $HOME/.cheat/$1
+		fi
+	fi
+}
+update()
+{
+	if [[ $1 == "" ]]
+	then
+		echo "Please add a file as input!"
+		exit 1
+	fi
+
+	if [[ ! -d "$HOME/.cheat" ]]
+	then
+		mkdir "$HOME/.cheat"
+	fi
+	
+	if [[ $2 == "" ]]
+	then
+		if [[ ! -f "$PWD/$1" ]]
+		then
+			echo "File $1 does not exist"
+		else
+			cat $PWD/$1 >> $HOME/.cheat/$1
+		fi
+	else
+		if [[ ! -f "$PWD/$2" ]]
+		then
+			echo "File $2 does not exist"
+		else
+			cat $PWD/$2 >> $HOME/.cheat/$1
+		fi
+	fi
+}
+destroy()
+{
+	if [[ $1 = "" ]]
+	then
+		echo "Please specify a file to delete!"
+		exit 1
+	fi
+
+	if [[ -f "$HOME/.cheat/$1" ]]
+	then
+		rm -f "$HOME/.cheat/$1"
+	else
+		echo "File $HOME/.cheat/$1 does not exist"
+	fi
+}
+if [[ $1 == "--help" || $1 == "" ]]
+then
+	print_help
+elif [[  $1 == "read" ]]
+then
+	read $2
+elif [[ $1 == "update" ]]
+then
+	update $2 $3
+elif [[ $1 == "write" ]]
+then
+	write $2
+elif [[ $1 == "destroy" ]]
+then
+	destroy $2
+elif [[ $1 == "recreate" ]]
+then
+	recreate $2 $3
+else
+	print_help
+fi
+
