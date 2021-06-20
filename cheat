@@ -29,10 +29,12 @@ read()
 	then
 		mkdir "$HOME/.cheat"
 		echo "The file does not exist!"
+		exit 1
 	else
 		if [[ ! -f "$HOME/.cheat/$1" ]]
 		then
 			echo "The file does not exist!"
+			print_help
 			exit 1
 		else
 			cat "$HOME/.cheat/$1"
@@ -171,6 +173,6 @@ elif [[ $1 == "list" || $1 == "ls" ]]
 then
 	list
 else
-	print_help
+	read $1
 fi
 
