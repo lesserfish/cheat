@@ -9,11 +9,11 @@ print_help(){
 	echo
 	echo "List of commands:"
 	echo "read - parameter [0] will be read."
-	echo "write - Creates a new file with the parameter being a text file containing the information to be displayed. Parameters are [0] = File to be added"
+	echo "write | add - Creates a new file with the parameter being a text file containing the information to be displayed. Parameters are [0] = File to be added"
 	echo "update - Appends file [1] to the existent file [0]. Parameters are [0] [1] [options]"
-	echo "destroy - Destroys file [0]"
+	echo "destroy | rm | remove - Destroys file [0]"
 	echo "recreate - Destroys the file [0] and creates file [1] with the same name."
-	echo "list - Lists all of the files"
+	echo "list | ls- Lists all of the files"
 	echo
 }
 
