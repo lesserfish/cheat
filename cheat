@@ -160,7 +160,7 @@ sendgit()
 	fi
 	
 	echo $@
-	git --git-dir $HOME/.cheat/.git $@
+	( cd $HOME/.cheat ; git $@ )
 }
 
 if [[ $1 == "--help" || $1 == "" ]]
@@ -186,7 +186,7 @@ then
 	list
 elif [[ $1 == "git" ]]
 then
-	shift; git $@
+	shift; sendgit $@
 else
 	read $1
 fi
