@@ -14,6 +14,7 @@ print_help(){
 	echo "destroy | rm | remove - Destroys file [0]"
 	echo "recreate - Destroys the file [0] and creates file [1] with the same name."
 	echo "list | ls- Lists all of the files"
+	echo "git - Perform a git command on the directory .cheat/.git"
 	echo
 }
 
@@ -151,6 +152,17 @@ list()
 		ls $HOME/.cheat
 	fi
 }
+sendgit()
+{
+	if [[ ! -d "$HOME/.cheat" ]]
+	then
+		mkdir $HOME/.cheat
+	fi
+	
+	echo $@
+	git --git-dir $HOME/.cheat/.git $@
+}
+
 if [[ $1 == "--help" || $1 == "" ]]
 then
 	print_help
@@ -172,6 +184,9 @@ then
 elif [[ $1 == "list" || $1 == "ls" ]]
 then
 	list
+elif [[ $1 == "git" ]]
+then
+	shift; git $@
 else
 	read $1
 fi
