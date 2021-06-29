@@ -20,6 +20,7 @@ print_help(){
 	echo "destroy | rm | remove - Destroys file [0]"
 	echo "update - Destroys the file [0] and creates file [1] with the same name."
 	echo "list | ls- Lists all of the files"
+	echo "ll - Prints each of the files along with the first line of each of them"
 	echo "git - Perform a git command on the directory .cheat/.git"
 	echo
 }
@@ -175,6 +176,27 @@ list()
 		)
 	fi
 }
+listext()
+{
+
+	if [[ ! -d "$HOME/.cheat" ]]
+	then
+		echo "No files exist!"
+	else
+		cols=$(tput cols)
+		( 	cd "$HOME/.cheat" ; 
+			
+			for f in *.cheat; do {
+				FNAME="${f%%.cheat}"
+				printf "${COLOR}${FNAME}${NC}    "
+				head -1 "${f}"
+				printf "\n"
+	   			} 
+		done 
+		printf "\n"
+		)
+	fi
+}
 sendgit()
 {
 	if [[ ! -d "$HOME/.cheat" ]]
@@ -207,6 +229,9 @@ then
 elif [[ $1 == "list" || $1 == "ls" ]]
 then
 	list
+elif [[ $1 == "ll" ]]
+then
+	listext
 elif [[ $1 == "git" ]]
 then
 	shift; sendgit "$@"
