@@ -153,7 +153,24 @@ list()
 	then
 		echo "No files exist!"
 	else
-		( cd "$HOME/.cheat" ; for f in *.cheat; do printf "${COLOR}%s\n${NC}" "${f%.cheat}"; done )
+		cols=$(tput cols)
+		( 	cd "$HOME/.cheat" ; 
+			
+			CLEN=0
+			for f in *.cheat; do {
+				FNAME="${f%%.cheat}"
+				FNAMELEN="${#FNAME}"
+				CLEN=$(($CLEN+$FNAMELEN+4))
+				if [[ $CLEN -gt $cols ]]
+				then
+					printf "\n"
+					CLEN=0
+				fi
+				printf "${COLOR}${FNAME}${NC}    "
+	   			} 
+		done 
+		printf "\n"
+		)
 	fi
 }
 sendgit()
