@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# if i switch to C, C++ i can use ncurses and have like a SHIT ton more of control. Is it worth it?
+#
 
 COLOR='\033[1;33m' # yellow
 NC='\033[0m' # No Color
