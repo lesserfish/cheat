@@ -175,10 +175,13 @@ destroy()
 		echo "Please specify a file to delete!"
 		exit 1
 	fi
-
+	
 	if [[ -f "$HOME/.cheat/$1.cheat" ]]
 	then
 		rm -f "$HOME/.cheat/$1.cheat"
+	elif [[ -d "$HOME/.cheat/$1" ]]
+	then
+		rm -rf "$HOME/.cheat/$1"
 	else
 		echo "File $HOME/.cheat/$1 does not exist"
 	fi
