@@ -16,7 +16,7 @@ print_help(){
 	echo
 	echo "List of commands:"
 	echo "read - parameter [0] will be read."
-	echo "write | add - Creates a new file with the parameter being a text file containing the information to be displayed. Parameters are [0] = File to be added"
+	echo "write | add - Creates a new file with the parameter being a text file containing the information to be displayed. Parameters are [0] = File to be added. cheat add [file] [dir] adds file to the directory"
 	echo "append - Appends file [1] to the existent file [0]. Parameters are [0] [1] [options]"
 	echo "destroy | rm | remove - Destroys file [0]"
 	echo "update - Destroys the file [0] and creates file [1] with the same name."
