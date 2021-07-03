@@ -205,7 +205,7 @@ def ls(arguments = None):
                 
                 cur_len = 0
                 max_len = os.get_terminal_size().columns;
-                for name in dirs:
+                for name in sorted(dirs, key=str.lower):
                     if(name[0] == '.'):
                         continue
                     if(cur_len + len(name) + TAB_AMOUNT > max_len):
@@ -213,7 +213,7 @@ def ls(arguments = None):
                         cur_len = 0;
                     print(DIRCOLOR + name + TAB + textcolors.END, end='');
                     cur_len = cur_len + len(name) + TAB_AMOUNT;
-                for name in files:
+                for name in sorted(files, key=str.lower):
                     if(not name.endswith('.cheat')):
                         continue
                     filename = name[0:len(name) - len(".cheat")]
@@ -238,11 +238,11 @@ def ll(arguments = None):
             print("")
             for root, dirs, files in os.walk(dirpath): 
                 
-                for name in dirs:
+                for name in sorted(dirs, key=str.lower):
                     if(name[0] == '.'):
                         continue
                     print(DIRCOLOR + name + TAB + textcolors.END, end='\n\n');
-                for name in files:
+                for name in sorted(files, key=str.lower):
 
                     filepath = dirpath + "/" + name; 
                     f = open(filepath, "r");
