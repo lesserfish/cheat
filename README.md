@@ -2,14 +2,15 @@
 A simple tool to write and read descriptions about whatever you want
 
 
-Cheat is for cheat-sheet. Basically a more simple version of man, which you usually update by yourself.
-Usage is as follows: "
  
-    cheat [command] [paramaters]
-
+    Cheat is for cheat-sheet! Usage is as follows:
+    cheat [command] [parameter] [file]
     List of commands:
-    read - parameter [0] will be read.
-    write - Creates a new file with the parameter being a text file containing the information to be displayed. Parameters are [0] = File to be added
-    update - Appends file [1] to the existent file [0], or [0] to [0] if [1] is not specified
-    destroy - Destroys file [0]
-    recreate" - Destroys the file [0] and creates file [1] with the same name, or [0] if [1] is not specified
+    read [file] - Reads the file
+    add [file] [directory] -Adds the file. If directory is not specified, the default will be used.
+    rm [option] [path] - If option is -f or not specified, removes the file associated to path. If option is -d removes the specified directory
+    append [existing-file] [file] - Appens file tp existing file. If file is not specified, cheat will search for a file of the same name as existing-file.
+    update [existing-file] [file] - Replaces existing file with the new file. If file is not specified, cheat will search for a file of the same name as existing-file
+    ls [path] - Lists all of the files and directories in directory")
+    ll [path] - Lists all of the files and directories in the directory while also printing the first line of each file
+    git [git commands] - Performs a git command on the directory of cheat. Please use single quotes instead of double quotes.
