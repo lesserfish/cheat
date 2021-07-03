@@ -258,11 +258,9 @@ def ll(arguments = None):
     print("");
 
 def git(arguments):
-    print(arguments);
     cdcommand = "cd " + CHEAT_DIR;
     gitcommand = " ".join(arguments);
     command = cdcommand+";"+gitcommand;
-    print(command);
     os.system(command);
 
 def main(argv):
