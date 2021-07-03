@@ -1,0 +1,336 @@
+#!/usr/bin/python3
+import sys, os, shutil
+
+
+CHEAT_DIR = os.path.expanduser("~")+"/.cheat/"
+TAB_AMOUNT = 4;
+TAB = " " * TAB_AMOUNT;
+class textcolors:
+    BLACK = "\033[0;30m"
+    RED = "\033[0;31m"
+    GREEN = "\033[0;32m"
+    BROWN = "\033[0;33m"
+    BLUE = "\033[0;34m"
+    PURPLE = "\033[0;35m"
+    CYAN = "\033[0;36m"
+    LIGHT_GRAY = "\033[0;37m"
+    DARK_GRAY = "\033[1;30m"
+    LIGHT_RED = "\033[1;31m"
+    LIGHT_GREEN = "\033[1;32m"
+    YELLOW = "\033[1;33m"
+    LIGHT_BLUE = "\033[1;34m"
+    LIGHT_PURPLE = "\033[1;35m"
+    LIGHT_CYAN = "\033[1;36m"
+    LIGHT_WHITE = "\033[1;37m"
+    BOLD = "\033[1m"
+    FAINT = "\033[2m"
+    ITALIC = "\033[3m"
+    UNDERLINE = "\033[4m"
+    BLINK = "\033[5m"
+    NEGATIVE = "\033[7m"
+    CROSSED = "\033[9m"
+    END = "\033[0m"
+
+def makeCheatDir():
+    if(not(os.path.isdir(CHEAT_DIR))):
+        try:
+            os.makedir(CHEAT_DIR);
+        except PermissionError:
+            print("ERROR: You do not have permission to create the cheat directory! Leaving!")
+            exit()
+def safe_check(path):
+
+    SAFEPATH = str(os.path.realpath(CHEAT_DIR))+"/";
+    EXPECTED_PATH = str(os.path.realpath(path));
+
+    if(not (EXPECTED_PATH.startswith(SAFEPATH) or EXPECTED_PATH+"/" == SAFEPATH)):
+        print("Error! This directory is out of limits!")
+        return False
+    return True
+
+def get_help():
+    print("Cheat is for cheat-sheet! Usage is as follows:\n")
+    print("cheat [command] [parameter] [file]\n")
+    print("List of commands:\n")
+    print("read [file]\t- Reads the file")
+    print("add [file] [directory]\t-Adds the file. If directory is not specified, the default will be used. ")
+    print("rm [option] [path]\t- If option is -f or not specified, removes the file associated to path. If option is -d removes the specified directory")
+    print("append [existing-file] [file]\t- Appens file tp existing file. If file is not specified, cheat will search for a file of the same name as existing-file.")
+    print("update [existing-file] [file]\t- Replaces existing file with the new file. If file is not specified, cheat will search for a file of the same name as existing-file")
+    print("ls [path]\t- Lists all of the files and directories in directory")
+    print("ll [path]\t- Lists all of the files and directories in the directory while also printing the first line of each file\n")
+    print("git [git commands]\t- Performs a git command on the directory of cheat. Please use single quotes inside double quotes when needed.\n")
+def print_file(filepath):
+    f = open(filepath, "r");
+    print(f.read(), end='');
+    f.close();
+
+def read(arguments):
+    makeCheatDir();
+    arglen = len(arguments)
+    for arg in arguments:
+        filepath = CHEAT_DIR + arg + ".cheat";
+        if(safe_check(filepath)):
+            if(not (os.path.isfile(filepath))):
+                print("File does not exist!");
+            else:
+                 print_file(filepath);
+
+def write_file(origin, destination, option = "w"):
+    o = open(origin, "r");
+    ocontent = o.read();
+    d = open(destination, option);
+    d.write(ocontent);
+    o.close();
+    d.close();
+
+def write(arguments):
+    arglen = len(arguments);
+    if(arglen == 1):
+        file = arguments[0];
+        dir = "";
+    elif(arglen == 2):
+        file = arguments[0];
+        dir = arguments[1] + "/";
+    else:
+        get_help();
+        exit();
+    
+    filepath = os.getcwd() + "/" + file;
+
+    if(not (os.path.isfile(filepath))):
+        print("The file does not exist!")
+        exit()
+
+    newdirpath = CHEAT_DIR + dir;
+    newfilepath = newdirpath + file + ".cheat";
+    if(safe_check(newfilepath)):
+        if(not (os.path.isdir(newdirpath))):
+            try:
+                os.makedirs(newdirpath)
+            except PermissionError:
+                print("You do not have permission to create this directory! Leaving.")
+                exit()
+        if(os.path.isfile(newfilepath)):
+            print("The file already exists! Please update or delete it!")
+            exit()
+        write_file(filepath, newfilepath, "w");
+    
+def update(arguments):
+    arglen = len(arguments);
+    if(arglen == 1):
+        newfile = arguments[0];
+        oldfile = arguments[0];
+    elif(arglen == 2):
+        newfile = arguments[1];
+        oldfile = arguments[0];
+    else:
+        get_help();
+        exit();
+
+    filepath = os.getcwd() + "/" + newfile;
+
+    if(not(os.path.isfile(filepath))):
+        print("The file does not exist!");
+        exit()
+    
+    newfilepath = CHEAT_DIR + "/" + oldfile + ".cheat";
+    if(safe_check(newfilepath)):
+        write_file(filepath, newfilepath, "w");
+
+def append(arguments):
+    arglen = len(arguments);
+    if(arglen == 1):
+        newfile = arguments[0];
+        oldfile = arguments[0];
+    elif(arglen == 2):
+        newfile = arguments[1];
+        oldfile = arguments[0];
+    else:
+        get_help();
+        exit();
+
+    filepath = os.getcwd() + "/" + newfile;
+
+    if(not(os.path.isfile(filepath))):
+        print("The file does not exist!");
+        exit()
+    
+    newfilepath = CHEAT_DIR + "/" + oldfile + ".cheat";
+    if(safe_check(newfilepath)):
+        write_file(filepath, newfilepath, "a");
+
+def remove(arguments):
+    arglen = len(arguments);
+    if(arguments[0] == '-d'): # We are removing directories
+        if(arglen <= 1):
+            get_help();
+            exit();
+        for dir in arguments[1:]:
+            dirpath = CHEAT_DIR + dir;
+            if(safe_check(dirpath)):
+                try:
+                    shutil.rmtree(dirpath);
+                except PermissionError:
+                    print("You do not have permission to remove this directory!")
+                except OSError:
+                    pass
+    else:
+        if(arguments[0] == "-f"):
+            if(arglen <= 1):
+                get_help();
+                exit();
+            filelist = arguments[1:]
+        else:
+            filelist = arguments[0:]
+        
+        for file in filelist:
+            filepath = CHEAT_DIR + file + ".cheat";
+            if(safe_check(filepath)):
+                try:
+                    os.remove(filepath);
+                except PermissionError:
+                    print("You do not have permission to remove this file!")
+                except OSError:
+                    pass
+def ls(arguments = None):
+    DIRCOLOR = textcolors.LIGHT_GREEN
+    FILECOLOR = textcolors.LIGHT_BLUE
+    if(arguments == None):
+        dirlist = [""];
+    else:
+        dirlist = arguments;
+    for dir in dirlist:
+        dirpath = CHEAT_DIR + dir;
+        if(safe_check(dirpath)):
+            for root, dirs, files in os.walk(dirpath): 
+                
+                cur_len = 0
+                max_len = os.get_terminal_size().columns;
+                for name in sorted(dirs, key=str.lower):
+                    if(name[0] == '.'):
+                        continue
+                    if(cur_len + len(name) + TAB_AMOUNT > max_len):
+                        print("\n", end='');
+                        cur_len = 0;
+                    print(DIRCOLOR + name + TAB + textcolors.END, end='');
+                    cur_len = cur_len + len(name) + TAB_AMOUNT;
+                for name in sorted(files, key=str.lower):
+                    if(not name.endswith('.cheat')):
+                        continue
+                    filename = name[0:len(name) - len(".cheat")]
+                    if(cur_len + len(filename) + TAB_AMOUNT > max_len):
+                        print("\n", end='');
+                        cur_len = 0;
+                    print(FILECOLOR + filename + TAB + textcolors.END, end='');
+                    cur_len = cur_len + len(filename) + TAB_AMOUNT;
+                break
+    print("");
+
+def ll(arguments = None):
+    DIRCOLOR = textcolors.LIGHT_GREEN
+    FILECOLOR = textcolors.LIGHT_BLUE
+    if(arguments == None):
+        dirlist = [""];
+    else:
+        dirlist = arguments;
+    for dir in dirlist:
+        dirpath = CHEAT_DIR + dir;
+        if(safe_check(dirpath)):
+            print("")
+            for root, dirs, files in os.walk(dirpath): 
+                
+                for name in sorted(dirs, key=str.lower):
+                    if(name[0] == '.'):
+                        continue
+                    print(DIRCOLOR + name + TAB + textcolors.END, end='\n\n');
+                for name in sorted(files, key=str.lower):
+
+                    filepath = dirpath + "/" + name; 
+                    f = open(filepath, "r");
+                    fline = f.readline();
+                    f.close();
+
+                    if(not name.endswith('.cheat')):
+                        continue
+                    filename = name[0:len(name) - len(".cheat")]
+                    print(FILECOLOR+ filename + textcolors.END, end='\t');
+                    print(fline, end='\n');
+                break
+    print("");
+
+def git(arguments):
+    cdcommand = "cd " + CHEAT_DIR;
+    gitcommand = " ".join(arguments);
+    command = cdcommand+";"+gitcommand;
+    os.system(command);
+
+def main(argv):
+    arglen = len(argv);
+    command = argv[1];
+
+    if(command == "-h" or command == "--help"):
+        get_help();
+        exit();
+    elif(command == "read"):
+        if(arglen <= 2):
+            get_help();
+            exit();
+        read(argv[2:])
+        exit()
+    elif(command == "write" or command == "add"):
+        if(arglen <= 2):
+            get_help();
+            exit();
+        write(argv[2:]);
+        exit();
+    elif(command == "update"):
+        if(arglen <= 2):
+            get_help();
+            exit();
+        update(argv[2:])
+        exit();
+    elif(command == "append"):
+        if(arglen <= 2):
+            get_help();
+            exit();
+        append(argv[2:]);
+        exit();
+    elif(command == "remove" or command == "rm"):
+        if(arglen <= 2):
+            get_help();
+            exit();
+        remove(argv[2:])
+        exit();
+    elif(command == "ls"):
+        if(arglen <= 2): # We did not pass directory to be read
+            ls(None)
+        else:
+            ls(argv[2:])
+        exit()
+    elif(command == "ll"):
+        if(arglen <= 2): # We did not pass directory to be read
+            ll(None)
+        else:
+            ll(argv[2:])
+        exit()
+    elif(command == "git"):
+        if(arglen <= 2):
+            git([""])
+        else:
+            git(argv[1:])
+        exit();
+    elif(command == "debug"):
+        if(arglen <= 2):
+            get_help();
+            exit()
+        safe_check(argv[2])
+        exit();
+    else:
+        if(arglen <= 1):
+            get_help();
+            exit();
+        read(argv[1:]);
+        exit();
+if __name__ == "__main__":
+    main(sys.argv)
