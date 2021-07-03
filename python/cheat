@@ -62,8 +62,8 @@ def get_help():
     print("git [git commands]\t- Performs a git command on the directory of cheat. Please use single quotes instead of double quotes.\n")
 def print_file(filepath):
     f = open(filepath, "r");
-    for line in f:
-        print(line);
+    print(f.read(), end='');
+    f.close();
 
 def read(arguments):
     makeCheatDir();
@@ -75,7 +75,6 @@ def read(arguments):
                 print("File does not exist!");
             else:
                  print_file(filepath);
-                 print("\n")
 
 def write_file(origin, destination, option = "w"):
     o = open(origin, "r");
