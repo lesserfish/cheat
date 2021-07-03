@@ -59,7 +59,7 @@ def get_help():
     print("update [existing-file] [file]\t- Replaces existing file with the new file. If file is not specified, cheat will search for a file of the same name as existing-file")
     print("ls [path]\t- Lists all of the files and directories in directory")
     print("ll [path]\t- Lists all of the files and directories in the directory while also printing the first line of each file\n")
-
+    print("git [git commands]\t- Performs a git command on the directory of cheat. Please use single quotes instead of double quotes.\n")
 def print_file(filepath):
     f = open(filepath, "r");
     for line in f:
@@ -258,7 +258,11 @@ def ll(arguments = None):
     print("");
 
 def git(arguments):
-    command = " ".join(arguments);
+    print(arguments);
+    cdcommand = "cd " + CHEAT_DIR;
+    gitcommand = " ".join(arguments);
+    command = cdcommand+";"+gitcommand;
+    print(command);
     os.system(command);
 
 def main(argv):
