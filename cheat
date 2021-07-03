@@ -34,6 +34,15 @@ read()
 		exit 1
 	fi
 
+	REALPATH=$(realpath $HOME/.cheat/$1)
+	EXPDPATH=$(realpath $HOME/.cheat)
+		
+	if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
+	then
+		echo "Path outside $HOME/.cheat"
+		exit 1
+	fi
+
 	if [[ ! -d "$HOME/.cheat" ]]
 	then
 		mkdir "$HOME/.cheat"
@@ -60,9 +69,19 @@ write()
 {
 	if [[ $2 == "" ]] # if we did not pass an specific directory
 	then
+
 		if [[ $1 == "" ]]
 		then
 			echo "Please add a file as input!"
+			exit 1
+		fi
+	
+		REALPATH=$(realpath $HOME/.cheat/$1.cheat)
+		EXPDPATH=$(realpath $HOME/.cheat)
+		
+		if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
+		then
+			echo "Path outside $HOME/.cheat"
 			exit 1
 		fi
 
@@ -90,6 +109,15 @@ write()
 			exit 1
 		fi
 		
+		REALPATH=$(realpath $HOME/.cheat/$2/$1.cheat)
+		EXPDPATH=$(realpath $HOME/.cheat)
+		
+		if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
+		then
+			echo "Path outside $HOME/.cheat"
+			exit 1
+		fi
+
 		if [[ ! -f "$PWD/$1" ]]
 		then
 			echo "File $1 does not exist"
@@ -122,6 +150,15 @@ update()
 	
 	if [[ $2 == "" ]]
 	then
+		REALPATH=$(realpath $HOME/.cheat/$1.cheat)
+		EXPDPATH=$(realpath $HOME/.cheat)
+		
+		if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
+		then
+			echo "Path outside $HOME/.cheat"
+			exit 1
+		fi
+
 		if [[ ! -f "$PWD/$1" ]]
 		then
 			echo "$File $1 does not exist"
@@ -130,6 +167,15 @@ update()
 			cat "$PWD/$1" > "$HOME/.cheat/$1.cheat"
 		fi
 	else
+		REALPATH=$(realpath $HOME/.cheat/$1.cheat)
+		EXPDPATH=$(realpath $HOME/.cheat)
+		
+		if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
+		then
+			echo "Path outside $HOME/.cheat"
+			exit 1
+		fi
+
 		if [[ ! -f "$PWD/$2" ]]
 		then
 			echo "File $2 does not exist"
@@ -153,6 +199,15 @@ append()
 	
 	if [[ $2 == "" ]]
 	then
+		REALPATH=$(realpath $HOME/.cheat/$1.cheat)
+		EXPDPATH=$(realpath $HOME/.cheat)
+		
+		if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
+		then
+			echo "Path outside $HOME/.cheat"
+			exit 1
+		fi
+
 		if [[ ! -f "$PWD/$1" ]]
 		then
 			echo "File $1 does not exist"
@@ -160,6 +215,15 @@ append()
 			cat "$PWD/$1" >> "$HOME/.cheat/$1.cheat"
 		fi
 	else
+		REALPATH=$(realpath $HOME/.cheat/$1.cheat)
+		EXPDPATH=$(realpath $HOME/.cheat)
+		
+		if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
+		then
+			echo "Path outside $HOME/.cheat"
+			exit 1
+		fi
+
 		if [[ ! -f "$PWD/$2" ]]
 		then
 			echo "File $2 does not exist"
@@ -176,14 +240,56 @@ destroy()
 		exit 1
 	fi
 	
-	if [[ -f "$HOME/.cheat/$1.cheat" ]]
+	if [[ $1 == "-d" ]] # We are trying to delete a directory
 	then
-		rm -f "$HOME/.cheat/$1.cheat"
-	elif [[ -d "$HOME/.cheat/$1" ]]
+		REALPATH=$(realpath $HOME/.cheat/$2)
+		EXPDPATH=$(realpath $HOME/.cheat)
+		
+		if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
+		then
+			echo "Path outside $HOME/.cheat"
+			exit 1
+		fi
+
+		if [[ ! -d "$HOME/.cheat/$2" ]]
+		then
+			echo "Directory does not exist"
+		else
+			rm -rf "$HOME/.cheat/$2"
+		fi
+	elif [[ $1 == "-f" ]] # We are trying to delete a directory
 	then
-		rm -rf "$HOME/.cheat/$1"
-	else
-		echo "File $HOME/.cheat/$1 does not exist"
+		REALPATH=$(realpath $HOME/.cheat/$2.cheat)
+		EXPDPATH=$(realpath $HOME/.cheat)
+		
+		if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
+		then
+			echo "Path outside $HOME/.cheat"
+			exit 1
+		fi
+
+		if [[ ! -f "$HOME/.cheat/$2.cheat" ]]
+		then
+			echo "File does not exist"
+		else
+			rm -f "$HOME/.cheat/$2.cheat"
+		fi
+	else	
+		REALPATH=$(realpath $HOME/.cheat/$1.cheat)
+		EXPDPATH=$(realpath $HOME/.cheat)
+		
+		if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
+		then
+			echo "Path outside $HOME/.cheat"
+			exit 1
+		fi
+
+		if [[ -f "$HOME/.cheat/$1.cheat" ]]
+		then
+			rm -f "$HOME/.cheat/$1.cheat"
+		else
+			echo "File does not exist"
+		fi
 	fi
 }
 list()
@@ -220,7 +326,16 @@ list()
 			)
 		fi
 	else
-		if [[ ! -d "$HOME/.cheat" ]]
+		REALPATH=$(realpath $HOME/.cheat/$1)
+		EXPDPATH=$(realpath $HOME/.cheat)
+		
+		if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
+		then
+			echo "Path outside $HOME/.cheat"
+			exit 1
+		fi
+
+		if [[ ! -d "$HOME/.cheat/$1" ]]
 		then
 			echo "No files exist!"
 		else
@@ -288,6 +403,15 @@ listext()
 			)
 		fi
 	else
+		REALPATH=$(realpath $HOME/.cheat/$1)
+		EXPDPATH=$(realpath $HOME/.cheat)
+		
+		if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
+		then
+			echo "Path outside $HOME/.cheat"
+			exit 1
+		fi
+
 		if [[ ! -d "$HOME/.cheat/$1" ]]
 		then
 			echo "No files exist!"
@@ -334,29 +458,29 @@ then
 	print_help
 elif [[  $1 == "read" ]]
 then
-	read $2
+	shift; read $@
 elif [[ $1 == "append" ]]
 then
-	append $2 $3
+	shift; append $@
 elif [[ $1 == "write" || $1 == "add" ]]
 then
-	write $2 $3
+	shift; write $@
 elif [[ $1 == "destroy" || $1 == "rm" || $1 == "remove" ]]
 then
-	destroy $2
+	shift; destroy $@
 elif [[ $1 == "update" ]]
 then
-	update $2 $3
+	shift; update $@
 elif [[ $1 == "list" || $1 == "ls" ]]
 then
-	list $2
+	shift; list $@
 elif [[ $1 == "ll" ]]
 then
-	listext $2
+	shift; listext $@
 elif [[ $1 == "git" ]]
 then
 	shift; sendgit "$@"
 else
-	read $1
+	read $@
 fi
 
