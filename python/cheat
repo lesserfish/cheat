@@ -325,7 +325,10 @@ def main(argv):
         safe_check(argv[2])
         exit();
     else:
-        read(command);
+        if(arglen <= 1):
+            get_help();
+            exit();
+        read(argv[1:]);
         exit();
 if __name__ == "__main__":
     main(sys.argv)
