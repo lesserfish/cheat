@@ -2,8 +2,6 @@
 A simple tool to write and read descriptions about whatever you want
 
 
-Cheat is for cheat-sheet. Basically a more simple version of man, which you usually update by yourself.
-Usage is as follows: "
  
     Cheat is for cheat-sheet! Usage is as follows:
     cheat [command] [parameter] [file]
