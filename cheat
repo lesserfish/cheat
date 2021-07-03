@@ -7,6 +7,21 @@ COLOR='\033[1;33m' # yellow
 DIRCOLOR='\033[1;34m' #blue
 NC='\033[0m' # No Color
 
+safe_check(){
+	if [[ -d "$@" || -f "$@" ]]
+	then
+		CHEATPATH=$(realpath $HOME/.cheat)	
+		GIVENPATH=$(realpath $1)
+
+		if [[ ! $GIVENPATH == $CHEATPATH* ]]
+		then
+			echo "Directory is out of limits!"
+			exit 1
+		fi
+	else
+		safe_check $(dirname $1)
+	fi
+}
 print_help(){
 	echo "Cheat is for cheat-sheet. Basically a more simple version of man, which you usually update by yourself."
 	echo "Usage is as follows: "
@@ -34,15 +49,6 @@ read()
 		exit 1
 	fi
 
-	REALPATH=$(realpath $HOME/.cheat/$1)
-	EXPDPATH=$(realpath $HOME/.cheat)
-		
-	if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
-	then
-		echo "Path outside $HOME/.cheat"
-		exit 1
-	fi
-
 	if [[ ! -d "$HOME/.cheat" ]]
 	then
 		mkdir "$HOME/.cheat"
@@ -51,6 +57,9 @@ read()
 	else
 		dir="$(dirname "$1")"
 		file="$(basename "$1")"
+
+		safe_check "$HOME/.cheat/$dir/$file.cheat"
+
 		if [[ ! -d "$HOME/.cheat/$dir" ]]
 		then
 			echo "The path does not exist"
@@ -76,14 +85,7 @@ write()
 			exit 1
 		fi
 	
-		REALPATH=$(realpath $HOME/.cheat/$1.cheat)
-		EXPDPATH=$(realpath $HOME/.cheat)
-		
-		if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
-		then
-			echo "Path outside $HOME/.cheat"
-			exit 1
-		fi
+		safe_check "$HOME/.cheat/$1.cheat"
 
 		if [[ ! -d "$HOME/.cheat" ]]
 		then
@@ -109,14 +111,7 @@ write()
 			exit 1
 		fi
 		
-		REALPATH=$(realpath $HOME/.cheat/$2/$1.cheat)
-		EXPDPATH=$(realpath $HOME/.cheat)
-		
-		if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
-		then
-			echo "Path outside $HOME/.cheat"
-			exit 1
-		fi
+		safe_check "$HOME/.cheat/$2/$1.cheat"
 
 		if [[ ! -f "$PWD/$1" ]]
 		then
@@ -150,14 +145,8 @@ update()
 	
 	if [[ $2 == "" ]]
 	then
-		REALPATH=$(realpath $HOME/.cheat/$1.cheat)
-		EXPDPATH=$(realpath $HOME/.cheat)
 		
-		if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
-		then
-			echo "Path outside $HOME/.cheat"
-			exit 1
-		fi
+		safe_check "$HOME/.cheat/$1.cheat"
 
 		if [[ ! -f "$PWD/$1" ]]
 		then
@@ -167,14 +156,9 @@ update()
 			cat "$PWD/$1" > "$HOME/.cheat/$1.cheat"
 		fi
 	else
-		REALPATH=$(realpath $HOME/.cheat/$1.cheat)
-		EXPDPATH=$(realpath $HOME/.cheat)
 		
-		if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
-		then
-			echo "Path outside $HOME/.cheat"
-			exit 1
-		fi
+		
+		safe_check "$HOME/.cheat/$1.cheat"
 
 		if [[ ! -f "$PWD/$2" ]]
 		then
@@ -199,14 +183,8 @@ append()
 	
 	if [[ $2 == "" ]]
 	then
-		REALPATH=$(realpath $HOME/.cheat/$1.cheat)
-		EXPDPATH=$(realpath $HOME/.cheat)
 		
-		if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
-		then
-			echo "Path outside $HOME/.cheat"
-			exit 1
-		fi
+		safe_check "$HOME/.cheat/$1.cheat"
 
 		if [[ ! -f "$PWD/$1" ]]
 		then
@@ -215,14 +193,8 @@ append()
 			cat "$PWD/$1" >> "$HOME/.cheat/$1.cheat"
 		fi
 	else
-		REALPATH=$(realpath $HOME/.cheat/$1.cheat)
-		EXPDPATH=$(realpath $HOME/.cheat)
 		
-		if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
-		then
-			echo "Path outside $HOME/.cheat"
-			exit 1
-		fi
+		safe_check "$HOME/.cheat/$1.cheat"
 
 		if [[ ! -f "$PWD/$2" ]]
 		then
@@ -242,14 +214,8 @@ destroy()
 	
 	if [[ $1 == "-d" ]] # We are trying to delete a directory
 	then
-		REALPATH=$(realpath $HOME/.cheat/$2)
-		EXPDPATH=$(realpath $HOME/.cheat)
 		
-		if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
-		then
-			echo "Path outside $HOME/.cheat"
-			exit 1
-		fi
+		safe_check "$HOME/.cheat/$2"
 
 		if [[ ! -d "$HOME/.cheat/$2" ]]
 		then
@@ -259,14 +225,8 @@ destroy()
 		fi
 	elif [[ $1 == "-f" ]] # We are trying to delete a directory
 	then
-		REALPATH=$(realpath $HOME/.cheat/$2.cheat)
-		EXPDPATH=$(realpath $HOME/.cheat)
-		
-		if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
-		then
-			echo "Path outside $HOME/.cheat"
-			exit 1
-		fi
+	
+		safe_check "$HOME/.cheat/$2.cheat"
 
 		if [[ ! -f "$HOME/.cheat/$2.cheat" ]]
 		then
@@ -275,14 +235,8 @@ destroy()
 			rm -f "$HOME/.cheat/$2.cheat"
 		fi
 	else	
-		REALPATH=$(realpath $HOME/.cheat/$1.cheat)
-		EXPDPATH=$(realpath $HOME/.cheat)
 		
-		if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
-		then
-			echo "Path outside $HOME/.cheat"
-			exit 1
-		fi
+		safe_check "$HOME/.cheat/$1,cheat"
 
 		if [[ -f "$HOME/.cheat/$1.cheat" ]]
 		then
@@ -326,14 +280,7 @@ list()
 			)
 		fi
 	else
-		REALPATH=$(realpath $HOME/.cheat/$1)
-		EXPDPATH=$(realpath $HOME/.cheat)
-		
-		if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
-		then
-			echo "Path outside $HOME/.cheat"
-			exit 1
-		fi
+		safe_check "$HOME/.cheat/$1"
 
 		if [[ ! -d "$HOME/.cheat/$1" ]]
 		then
@@ -403,14 +350,8 @@ listext()
 			)
 		fi
 	else
-		REALPATH=$(realpath $HOME/.cheat/$1)
-		EXPDPATH=$(realpath $HOME/.cheat)
 		
-		if [[ ! $REALPATH == $EXPDPATH* ]] # If the path is not inside our .cheat directory
-		then
-			echo "Path outside $HOME/.cheat"
-			exit 1
-		fi
+		safe_check "$HOME/.cheat/$1"
 
 		if [[ ! -d "$HOME/.cheat/$1" ]]
 		then
@@ -480,6 +421,9 @@ then
 elif [[ $1 == "git" ]]
 then
 	shift; sendgit "$@"
+elif [[ $1 == "debug" ]]
+then
+	shift; safe_check $@
 else
 	read $@
 fi
