@@ -256,6 +256,11 @@ def ll(arguments = None):
                     print(fline, end='\n');
                 break
     print("");
+
+def git(arguments):
+    command = " ".join(arguments);
+    os.system(command);
+
 def main(argv):
     arglen = len(argv);
     command = argv[1];
@@ -305,7 +310,12 @@ def main(argv):
         else:
             ll(argv[2:])
         exit()
-
+    elif(command == "git"):
+        if(arglen <= 2):
+            git([""])
+        else:
+            git(argv[1:])
+        exit();
     elif(command == "debug"):
         if(arglen <= 2):
             get_help();
