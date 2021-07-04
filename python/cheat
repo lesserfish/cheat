@@ -57,6 +57,9 @@ def get_help():
     print("rm [option] [path]\t- If option is -f or not specified, removes the file associated to path. If option is -d removes the specified directory")
     print("append [existing-file] [file]\t- Appens file tp existing file. If file is not specified, cheat will search for a file of the same name as existing-file.")
     print("update [existing-file] [file]\t- Replaces existing file with the new file. If file is not specified, cheat will search for a file of the same name as existing-file")
+    print("mkdir [dirpath]\t- Creates the directory in path");
+    print("cp [option] [origin] [destination]\t- Copies the file or directory at origin to destination. Options is -d for directory or -f for file. If ignored, default is file")
+    print("mv [option] [origin] [destination]\t- Moves the file or directory at origin to destionation. Options is -d for directory or -f for file. If ignores, default is file")
     print("ls [path]\t- Lists all of the files and directories in directory")
     print("ll [path]\t- Lists all of the files and directories in the directory while also printing the first line of each file\n")
     print("git [git commands]\t- Performs a git command on the directory of cheat. Please use single quotes inside double quotes when needed.\n")
@@ -265,6 +268,120 @@ def git(arguments):
     command = cdcommand+";"+gitcommand;
     os.system(command);
 
+def mkdir(arguments):
+    for arg in arguments:
+        path = CHEAT_DIR + arg;
+        if(safe_check(path)):
+            if(os.path.isdir(arg)):
+                print("Directory {} already exists!".format(arg))
+            else:
+                try:
+                    os.mkdir(path);
+                except PermissionError:
+                    print("You do not have permission to create this directory!")
+                except OSError:
+                    print("Error creating directory!")
+
+def cp(arguments):
+    arglen = len(arguments);
+    if(arguments[0] == '-d'):
+        if(arglen != 3):
+            get_help();
+            exit();
+        origin = arguments[1];
+        destination = arguments[2];
+
+        originpath = CHEAT_DIR + origin;
+        destinationpath = CHEAT_DIR + destination;
+
+        if(safe_check(originpath) and safe_check(destinationpath)):
+            if(not (os.path.isdir(originpath))):
+                print("This directory does not exist!");
+                exit();
+            try:
+                shutil.copytree(originpath, destinationpath);
+            except PermissionError:
+                print("You do not have permission to copy this directory!")
+            except OSError:
+                print("Error copying directory!");
+        exit();
+    if(arguments[0] == "-f"):
+        if(arglen != 3):
+            get_help();
+            exit();
+        origin = arguments[1];
+        destination = arguments[2];
+    else:
+        if(arglen != 2):
+            get_help();
+            exit();
+        origin = arguments[0];
+        destination = arguments[1];
+
+    originpath = CHEAT_DIR + origin + ".cheat";
+    destinationpath = CHEAT_DIR + destination + ".cheat";
+
+    if(safe_check(originpath) and safe_check(destinationpath)):
+        if(not (os.path.isfile(originpath))):
+            print("This file does not exist!");
+            exit();
+        try:
+            write_file(originpath, destinationpath, "w");
+        except PermissionError:
+            print("You do not have permission to write to this file!");
+        except OSError:
+            print("Failed to perform task!")
+
+def mv(arguments):
+    arglen = len(arguments);
+    if(arguments[0] == '-d'):
+        if(arglen != 3):
+            get_help();
+            exit();
+        origin = arguments[1];
+        destination = arguments[2];
+
+        originpath = CHEAT_DIR + origin;
+        destinationpath = CHEAT_DIR + destination;
+
+        if(safe_check(originpath) and safe_check(destinationpath)):
+            if(not (os.path.isdir(originpath))):
+                print("This directory does not exist!");
+                exit();
+            try:
+                shutil.copytree(originpath, destinationpath);
+                shutil.rmtree(originpath);
+            except PermissionError:
+                print("You do not have permission to copy this directory!")
+            except OSError:
+                print("Error copying directory!");
+        exit();
+    if(arguments[0] == "-f"):
+        if(arglen != 3):
+            get_help();
+            exit();
+        origin = arguments[1];
+        destination = arguments[2];
+    else:
+        if(arglen != 2):
+            get_help();
+            exit();
+        origin = arguments[0];
+        destination = arguments[1];
+    originpath = CHEAT_DIR + origin + ".cheat";
+    destinationpath = CHEAT_DIR + destination + ".cheat";
+
+    if(safe_check(originpath) and safe_check(destinationpath)):
+        if(not (os.path.isfile(originpath))):
+            print("This file does not exist!");
+            exit();
+        try:
+            write_file(originpath, destinationpath, "w");
+            os.remove(originpath);
+        except PermissionError:
+            print("You do not have permission to do this!")
+        except OSError:
+            print("Failed to do this!")
 def main(argv):
     arglen = len(argv);
     command = argv[1];
@@ -326,6 +443,21 @@ def main(argv):
             exit()
         safe_check(argv[2])
         exit();
+    elif(command == "mkdir"):
+        if(arglen <= 2):
+            get_help();
+            exit()
+        mkdir(argv[2:])
+    elif(command == "cp"):
+        if(arglen <= 2):
+            get_help();
+            exit();
+        cp(argv[2:])
+    elif(command == "mv"):
+        if(arglen <= 2):
+            get_help();
+            exit();
+        mv(argv[2:])
     else:
         if(arglen <= 1):
             get_help();
