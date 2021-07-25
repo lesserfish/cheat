@@ -383,6 +383,7 @@ def mv(arguments):
         except OSError:
             print("Failed to do this!")
 def main(argv):
+    makeCheatDir()
     arglen = len(argv);
     command = argv[1];
 
