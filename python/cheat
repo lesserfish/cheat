@@ -34,7 +34,7 @@ class textcolors:
 def makeCheatDir():
     if(not(os.path.isdir(CHEAT_DIR))):
         try:
-            os.makedir(CHEAT_DIR);
+            os.makedirs(CHEAT_DIR);
         except PermissionError:
             print("ERROR: You do not have permission to create the cheat directory! Leaving!")
             exit()
