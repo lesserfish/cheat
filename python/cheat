@@ -385,6 +385,11 @@ def mv(arguments):
 def main(argv):
     makeCheatDir()
     arglen = len(argv);
+    
+    if(arglen < 2):
+        get_help()
+        exit()
+
     command = argv[1];
 
     if(command == "-h" or command == "--help"):
